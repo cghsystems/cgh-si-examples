@@ -36,8 +36,8 @@ class SequencingTest {
 
         final countDownLatch = new CountDownLatch(inputs.size())
 
-        //Should get messages in order (1-5)
-        def x = 0
+        //Should get messages in order (3-2)
+        def x = 1
         final messageHandler = [handleMessage: {
                 final sequence = it.getPayload().sequence
                 assert sequence == ++x : "Messages are not in order Got sequence ${sequence} as position ${x}"
@@ -46,7 +46,7 @@ class SequencingTest {
 
         outputChannel.subscribe(messageHandler)
 
-        //Send the messages in 5-1)
+        //Send the messages in 3-2)
         inputs.each {
             inputChannel.send( MessageBuilder.withPayload(it).build() )
         }

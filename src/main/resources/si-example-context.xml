@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
 
 	<int:channel id="testInputChannel" />
 	<int:channel id="testOutputChannel" />
@@ -11,11 +13,25 @@
 
 	<int:chain input-channel="testInputChannel" output-channel="testOutputChannel">
 		<int:transformer ref="headerEnricher" />
-		<int:resequencer release-partial-sequences="true"
+		<int:resequencer  release-partial-sequences="true" message-store="messageStore"
 			send-partial-result-on-expiry="true" discard-channel="discardChannel">
 		</int:resequencer>
 		<int:transformer ref="transformer" method="transform" />
 	</int:chain>
+
+	<bean id="messageStore"
+		class="org.springframework.integration.store.SimpleMessageStore" />
+
+	<bean id="messageStoreReaper"
+		class="org.springframework.integration.store.MessageGroupStoreReaper">
+		<property name="messageGroupStore" ref="messageStore" />
+		<property name="timeout" value="1000" />
+	</bean>
+
+	<task:scheduled-tasks>
+		<task:scheduled ref="messageStoreReaper" method="run"
+			fixed-rate="500" />
+	</task:scheduled-tasks>
 
 	<bean id="transformer" class="net.cghsystems.si.sequencing.example.SITransformer" />
 	<bean id="headerEnricher" class="net.cghsystems.si.sequencing.example.HeaderEnricher" />
