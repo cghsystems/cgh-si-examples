@@ -13,14 +13,9 @@ class HeaderEnricher implements Transformer {
 
         def payload = message.getPayload()
 
-        def (sequence, correlationId) = [
-            payload.sequence,
-            payload.name
-        ]
-
         def headers = new HashMap(message.headers)
-        headers.put(MessageHeaders.SEQUENCE_NUMBER, sequence)
-        headers.put(MessageHeaders.CORRELATION_ID, correlationId)
+        headers.put(MessageHeaders.SEQUENCE_NUMBER,  payload.sequence)
+        headers.put(MessageHeaders.CORRELATION_ID, payload.name)
 
         MessageBuilder.withPayload(payload).copyHeaders(headers).build()
     }
