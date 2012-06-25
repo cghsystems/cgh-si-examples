@@ -38,11 +38,12 @@ class SequencingTest {
 
         //Should get messages in order (3-2)
         def x = 1
-        final messageHandler = [handleMessage: {
-                final sequence = it.getPayload().sequence
-                assert sequence == ++x : "Messages are not in order Got sequence ${sequence} as position ${x}"
-                countDownLatch.countDown()
-            } ] as MessageHandler
+        final handleMessage = {
+            final sequence = it.getPayload().sequence
+            assert sequence == ++x : "Messages are not in order Got sequence ${sequence} as position ${x}"
+            countDownLatch.countDown()
+        }
+        final messageHandler = [ handleMessage: handleMessage ]as MessageHandler
 
         outputChannel.subscribe(messageHandler)
 
@@ -69,25 +70,25 @@ class SequencingTest {
 
         //Should get messages in order (1-5)
         def (testCount, test1Count) = [0, 0]
-        final messageHandler = [handleMessage: {
-                final sequence = it.getPayload().sequence
-                final correlationId = it.getHeaders().getCorrelationId()
 
-                println correlationId
+        final handleMessage = {
+            final sequence = it.getPayload().sequence
+            final correlationId = it.getHeaders().getCorrelationId()
 
-                if(correlationId == "Test-1") {
-                    assert sequence == ++test1Count : "Messages are not in order. Got sequence ${sequence} as position ${test1Count}"
-                    test1CountDownLatch.countDown()
-                }else if(correlationId == "Test") {
-                    assert sequence == ++testCount : "Messages are not in order. Got sequence ${sequence} as position ${testCount}"
-                    testCountDownLatch.countDown()
-                }
-            } ] as MessageHandler
+            if(correlationId == "Test-1") {
+                assert sequence == ++test1Count : "Messages are not in order. Got sequence ${sequence} as position ${test1Count}"
+                test1CountDownLatch.countDown()
+            }else if(correlationId == "Test") {
+                assert sequence == ++testCount : "Messages are not in order. Got sequence ${sequence} as position ${testCount}"
+                testCountDownLatch.countDown()
+            }
+        }
+
+        final messageHandler = [handleMessage: handleMessage ] as MessageHandler
 
         outputChannel.subscribe(messageHandler)
 
         inputs.each {
-            println it
             inputChannel.send( MessageBuilder.withPayload(it).build() )
         }
 
@@ -108,11 +109,12 @@ class SequencingTest {
 
         //Should get messages in order (1-5)
         def x = 0
-        final messageHandler = [handleMessage: {
-                final sequence = it.getPayload().sequence
-                assert sequence == ++x : "Messages are not in order Got sequence ${sequence} as position ${x}"
-                countDownLatch.countDown()
-            } ] as MessageHandler
+        final handleMessage = {
+            final sequence = it.getPayload().sequence
+            assert sequence == ++x : "Messages are not in order Got sequence ${sequence} as position ${x}"
+            countDownLatch.countDown()
+        }
+        final messageHandler = [handleMessage: handleMessage ] as MessageHandler
 
         outputChannel.subscribe(messageHandler)
 
@@ -136,15 +138,14 @@ class SequencingTest {
 
         final countDownLatch = new CountDownLatch(inputs.size())
 
-        def order = [1, 2, 3, 4, 5]
-
         //Should get messages in order (1-5)
         def x = 0
-        final messageHandler = [handleMessage: {
-                final sequence = it.getPayload().sequence
-                assert sequence == ++x : "Messages are not in order Got sequence ${sequence} as position ${x}"
-                countDownLatch.countDown()
-            } ] as MessageHandler
+        def handleMessage = {
+            final sequence = it.getPayload().sequence
+            assert sequence == ++x : "Messages are not in order Got sequence ${sequence} as position ${x}"
+            countDownLatch.countDown()
+        }
+        final messageHandler = [handleMessage: handleMessage ] as MessageHandler
 
         outputChannel.subscribe(messageHandler)
 
