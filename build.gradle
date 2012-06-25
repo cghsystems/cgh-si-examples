@@ -1,0 +1,33 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+
+final String SPRING_VERSION = '3.1.0.RELEASE'
+final String SPRING_INTEGRATION_VERSION = '2.1.1.RELEASE'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.0'
+
+    compile group: 'cglib', name: 'cglib', version: '2.2.2'
+    compile group: 'log4j', name: 'log4j', version: '1.2.16'
+
+
+    compile group: 'org.springframework', name: 'spring-context', version: SPRING_VERSION
+    compile group: 'org.springframework', name: 'spring-core', version: SPRING_VERSION
+    compile group: 'org.springframework', name: 'spring-beans', version: SPRING_VERSION
+    compile group: 'org.springframework', name: 'spring-asm', version: SPRING_VERSION
+    compile group: 'org.springframework', name: 'spring-expression', version: SPRING_VERSION
+
+
+    //Spring Integration
+    compile group: 'org.springframework.integration', name: 'spring-integration-core', version: SPRING_INTEGRATION_VERSION
+
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
+
+    testCompile group: 'org.springframework', name: 'spring-test', version: SPRING_VERSION
+    testCompile group: 'junit', name: 'junit', version: '4.10'
+}
