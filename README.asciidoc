@@ -1,0 +1,4 @@
+== cgh-si-examples
+
+A skunk works project containing examples of how to use 
+http://www.springsource.org/spring-integration/[Spring Integration] features
