@@ -33,7 +33,7 @@
 			fixed-rate="500" />
 	</task:scheduled-tasks>
 
-	<bean id="transformer" class="net.cghsystems.si.sequencing.example.SITransformer" />
-	<bean id="headerEnricher" class="net.cghsystems.si.sequencing.example.HeaderEnricher" />
+	<bean id="transformer" class="net.cghsystems.si.sequencing.SITransformer" />
+	<bean id="headerEnricher" class="net.cghsystems.si.sequencing.HeaderEnricher" />
 
 </beans>
